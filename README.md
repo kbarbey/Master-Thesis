@@ -13,7 +13,7 @@ In this project, the student will work with part of the python package SPARTA an
 1. Read articles : Binnenfeld et al. (2021), Anderson(2018) and Székely, Izzo(2016)
 2. Set up SPARTA code -> some dependencies problems with python 3.7. Requirements.txt needs to be updated. 
     1. Works with python 3.8.12 though and the following packages' versions:
-    
+
     | Package                       | Version | Editable project location                             |
     | ----------------------------- | ------- | ---------------------------------------------------- |
     | astropy                       | 4.0.1.post1                                      |
@@ -81,13 +81,13 @@ In this project, the student will work with part of the python package SPARTA an
 
 
 
-    2. Had to change code in USURPER.py because lists are not accepted in nopython mode of numba. Changed them to numpy objects instead.
+    2. Had to change code in `USURPER_functions.py` because lists are not accepted in `nopython` mode of numba. Changed them to numpy objects instead.
 
     3. Trying the examples and tutorials.
 
 ## Week 2 :
 
-1. Problem in the code : shift periodogram doesn't match the one in the article. Comes from the USURPER_functions.py in the calc_pdc_unbiased function where the wavelength of the original spectra is shifted twice in the shift periodogram if the shape periodogram is called before the shift one. Workaround found by simply copying the wavelengths into a temporary variable.
+1. Problem in the code : shift periodogram doesn't match the one in the article. Comes from the `USURPER_functions.py` in the `calc_pdc_unbiased` function where the wavelength of the original spectra is shifted twice in the shift periodogram if the shape periodogram is called before the shift one. Workaround found by simply copying the wavelengths into a temporary variable.
 2. TODO : 
     1. Play with the limits of the code, try to find some limiting factors. How does the code react to changing its parameters. For the moment still with SMus.
     2. Try to see how the uncertainties are defined and the p-values -> in Shen, 2021 it's only the distance correlation that we are talking about. Should the p-value be defined in an other way for pdc and spdc ?
