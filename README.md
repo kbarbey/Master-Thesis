@@ -41,3 +41,24 @@ Will evolve constantly until project is done. Then it will take a more official 
             3. GEV would be really nice to have <font color="red">especially in our case where we have no prior information<font>(see intro of Suveges, 2014) IMPLEMENT GEV? (https://docs.scipy.org/doc/scipy/tutorial/stats/continuous_genextreme.html)
 3. Where in the spectrum should the RVs be computed ? Why 5800-6000A or 5600-5800 ?
 4. Why did they change their code to compute the p-value and not the FAP anymore ? Anyway with both they get spurious(?) peaks above the 1e-4 line. But these peaks often appear in both shape and shift periodograms so maybe to detect them we could try to find if they appear in both. If that's the case at a certain level then they are probably spurious(need to check if reasonable).
+5. Extracted rvs worked. The problem was that we had to account for air wv transformation in Coralie's RV computation.
+
+## Week 3 :
+
+After weekly meeting, we have a priority list I think :
+
+1.	Clean, update to 3.11 the code. Test other stars.
+2.	Convergence test for complexity.
+    1.	If O(Nlog(N)) then all good.
+    2.	If not : think about how to make it happen.
+3.	In parralel : 
+    1.	Automatise the code for large data sets of RV(could be cool with VELOCE).
+    2.	Make it work on Iestà.
+    3.	Strong and weak points of the method : peak significance and peak aliases.
+    4.	Interpretation of the periodogram. Uncertainties.
+(3bis. O(Nlog(N)) if necessary.)
+4.	About the maths themselves : metrics, correlated noise, Nyquist frequency, statistical power.
+
+References for the different tasks :
+
+1. 

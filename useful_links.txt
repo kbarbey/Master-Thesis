@@ -1,0 +1,13 @@
+Basics : 
+
+https://fr.wikipedia.org/wiki/Repliement_de_spectre
+
+GEV : 
+
+https://docs.scipy.org/doc/scipy/tutorial/stats/continuous_genextreme.html
+
+On p-values and q-values : 
+
+https://totallab.com/resources/p-values-fdr-q-values/#:~:text=q-values%20are%20the%20name,a%20list%20of%20q-values.
+https://en.wikipedia.org/wiki/False_discovery_rate#Related_error_rates
+https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate
