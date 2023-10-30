@@ -11,3 +11,6 @@ On p-values and q-values :
 https://totallab.com/resources/p-values-fdr-q-values/#:~:text=q-values%20are%20the%20name,a%20list%20of%20q-values.
 https://en.wikipedia.org/wiki/False_discovery_rate#Related_error_rates
 https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate
+
+For later :
+https://www.audiolabs-erlangen.de/resources/MIR/FMP/C6/C6S3_BeatTracking.html -> for beat stars ?

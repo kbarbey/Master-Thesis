@@ -47,7 +47,7 @@ Will evolve constantly until project is done. Then it will take a more official 
 
 After weekly meeting, we have a priority list I think :
 
-1.	Clean, update to 3.11 the code. Test other stars.
+1.	Test Henia's stars.
 2.	Convergence test for complexity.
     1.	If O(Nlog(N)) then all good.
     2.	If not : think about how to make it happen.
@@ -56,9 +56,44 @@ After weekly meeting, we have a priority list I think :
     2.	Make it work on Iestà.
     3.	Strong and weak points of the method : peak significance and peak aliases.
     4.	Interpretation of the periodogram. Uncertainties.
+
 (3bis. O(Nlog(N)) if necessary.)
+
 4.	About the maths themselves : metrics, correlated noise, Nyquist frequency, statistical power.
 
-References for the different tasks :
+To code :
 
-1. 
+1. Find the peaks and their aliases.
+2. Fold the Rvs to the main period found and plot it.
+3. Compute the residuals.
+4. Fold it to the second highest peak ?
+
+Questions :
+
+1. How should I pre-process the spectra ? What delta should I choose between the wv ? What parameters more generally ?
+2. Is the shape variability of the spectrum different depending on where you're looking in it ? Because then I would argue that when loading the spectra, we should choose a range of wavelengths where the radial velocities were computed and not just randomly 5600-5800A.
+
+24.10.2023 :
+
+To Do :
+
+1. Improve peak finding routine, cleaning of periodogram ? 
+2. Better peak fitting
+3. Telluric (richard)
+4. Wv ranges
+5. Better examples(binaries) -> richard
+6. In template.py, see air parameter(probably just refraction correction).
+
+Plan on how to do it:
+
+1. Peak finding routine:
+    1. Periodogram cleaning:
+        1. Finding the peaks: combine thresholding and simple height comparison of neighbouring points(adaptive thresholding). Why : Because usual threshold gives way too many peaks for even conservative p-values and simple height comparison doesn't work well in some case such as BG Crucis shape periodogram and V0391(lots of high fluctuations around highest peak).
+        2. Find harmonics of the 2-3 highest and identify them(remove them also ? If yes, how ?)
+        3. Do the same with harmonics of window functions. Search for $f=\text{days}^{-1}$ or even a week. See power spectrum of window function.
+    2. Find peaks again(simple comparison should be ok now).
+        1. Fit gaussian.
+        2. Get best period + uncertainty
+        3. Fold RVs accordingly.
+        4. Get residuals by subtracting model again.
+        5. Plot residuals.

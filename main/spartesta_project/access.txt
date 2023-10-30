@@ -1,0 +1,6 @@
+ssh kbarbey@login01.astro.unige.ch
+
+To do computations :
+
+ssh lesta02
+cd /scratch
