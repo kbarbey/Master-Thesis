@@ -1,36 +1,33 @@
 import os
-import pandas as pd
 import pickle
-from sparta.Auxil.PeriodicityDetector import PeriodicityDetector
-from sparta.UNICOR.Spectrum import Spectrum
-from sparta.UNICOR.Template import Template
-from sparta.Auxil.TimeSeries import TimeSeries
+import pandas as pd
 from sparta.Observations import Observations
 
 # Specify the parent directory containing all the folders
-spectra_directory = "/home/astro/kbarbey/pdm/S1D/spectra"
-rv_directory = "/home/astro/kbarbey/pdm/S1D/RV"
+SPEC_DIR = "/home/astro/kbarbey/pdm/S1D/spectra"
+RV_DIR = "/home/astro/kbarbey/pdm/S1D/RV"
 
 # List all subdirectories (folders) in the parent directory
-spectra_folders = sorted([os.path.join(spectra_directory,folder) for folder in os.listdir(spectra_directory) if os.path.isdir(os.path.join(spectra_directory, folder))])
-rv_folders = sorted([os.path.join(rv_directory,folder) for folder in os.listdir(rv_directory)])
-print(spectra_folders,rv_folders)
+SPEC_FOLD = sorted([os.path.join(SPEC_DIR,folder) for folder in os.listdir(SPEC_DIR)
+                    if os.path.isdir(os.path.join(SPEC_DIR, folder))])
+RV_FOLD = sorted([os.path.join(RV_DIR,folder) for folder in os.listdir(RV_DIR)])
+print(SPEC_FOLD,RV_FOLD)
 # Loop over all subdirectories
-for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
+for rv_folder, spectra_folder in zip(RV_FOLD, SPEC_FOLD):
 
     # DATA PARAMETERS
 
-    survey = "CORALIE" # survey name
-    sample_rate = 1 # sample rate of the data
-    min_wv = 4000 # minimum wavelength of the data
-    max_wv = 6000 # maximum wavelength of the data
-    spec_dir = spectra_folder #"/home/astro/kbarbey/pdm/S1D/BGCru" # directory of the spectra
-    rv_dir = rv_folder #"/home/astro/kbarbey/pdm/S1D/BGCru/RV/BG_Cru_coralie14.csv" # directory of the RVs
+    SURVEY = "CORALIE" # survey name
+    SAMPLE_RATE= 1 # sample rate of the data
+    MIN_WV = 4000 # minimum wavelength of the data
+    MAX_WV = 6000 # maximum wavelength of the data
+    spec_dir = spectra_folder # directory of the spectra
+    rv_dir = rv_folder # directory of the RVs
 
     # LOAD DATA
 
-    obs_data = Observations(survey=survey, sample_rate=sample_rate, min_wv=min_wv, max_wv=max_wv,
-                            target_visits_lib=spec_dir)
+    obs_data = Observations(survey=SURVEY, sample_rate=SAMPLE_RATE, min_wv=MIN_WV, max_wv=MAX_WV,
+                            target_visits_lib=SPEC_DIR)
     df = pd.read_csv(rv_dir)
     rv = df.rv.astype(float).values
     e_rv = df.rv_err.astype(float).values
@@ -40,15 +37,15 @@ for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
     # PERIODOGRAM PARAMETERS
 
     baseline = int(obs_data.time_series.times[-1])
-    min_freq = 1/100 # Or maybe 1/2/baseline to be sure but let's test it that way.
-    max_freq = 1/2 # we don't expect more than one pulsation every two day so should be alright.
-    freq_range = (min_freq, max_freq) # frequency range of the periodograms
-    points_per_peak = 5
-    periodogram_grid_resolution = points_per_peak*max_freq*baseline # frequency resolution of the periodograms
+    MIN_FREQ = 1/1000 # Or maybe 1/2/baseline to be sure but let's test it that way.
+    MAX_FREQ = 1/2 # we don't expect more than one pulsation every two day so should be alright.
+    freq_range = (MIN_FREQ, MAX_FREQ) # frequency range of the periodograms
+    PPP = 5 # points per peak
+    periodogram_grid_resolution = PPP*MAX_FREQ*baseline # frequency resolution of the periodograms
 
     # RESULS DIRECTORY
 
-    results_dir = "/home/astro/kbarbey/pdm/S1D/results" # directory of the results
+    RESULTS_DIR = "/home/astro/kbarbey/pdm/S1D/results" # directory of the results
 
 
 
@@ -87,9 +84,11 @@ for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
 
     print("Shift done",flush=True)
 
-    # Save the observations instance in a pickle file with the name of the spec_dir name in the results directory
+    # Save the observations instance in a pickle file with the name of 
+    # the spec_dir name in the results directory
 
-    file = open(os.path.join(results_dir, f"{spec_dir.rsplit('/',maxsplit=1)[-1]}_{str(min_wv)}_{str(max_wv)}.pkl"), 'wb')
+    file = open(os.path.join(RESULTS_DIR,
+                             f"{spec_dir.rsplit('/',maxsplit=1)[-1]}_{str(MIN_WV)}_{str(MAX_WV)}.pkl"), 'wb')
     pickle.dump(obs_data, file)
     file.close()
 
