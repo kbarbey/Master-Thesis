@@ -38,12 +38,12 @@ for rv_folder, spectra_folder in zip(RV_FOLD, SPEC_FOLD):
 
     baseline = int(obs_data.time_series.times[-1])
     MIN_FREQ = 1/1000 # Or maybe 1/2/baseline to be sure but let's test it that way.
-    MAX_FREQ = 1/2 # we don't expect more than one pulsation every two day so should be alright.
+    MAX_FREQ = 2 # we don't expect more than one pulsation every two day so should be alright.
     freq_range = (MIN_FREQ, MAX_FREQ) # frequency range of the periodograms
     PPP = 5 # points per peak
     periodogram_grid_resolution = PPP*MAX_FREQ*baseline # frequency resolution of the periodograms
 
-    # RESULS DIRECTORY
+    # RESULTS DIRECTORY
 
     RESULTS_DIR = "/home/astro/kbarbey/pdm/S1D/results" # directory of the results
 

@@ -14,3 +14,6 @@ https://www.publichealth.columbia.edu/research/population-health-methods/false-d
 
 For later :
 https://www.audiolabs-erlangen.de/resources/MIR/FMP/C6/C6S3_BeatTracking.html -> for beat stars ?
+
+Classical Cepheids in the Milky Way:
+http://www.astrouw.edu.pl/ogle/ogle4/OCVS/allGalCep.listID
