@@ -77,8 +77,7 @@ Questions :
 
 To Do :
 
-1. Improve peak finding routine, cleaning of periodogram ? 
-2. Better peak fitting
+1. Improve peak finding routine, cleaning of periodogram ? -> Done
 3. Telluric (richard)
 4. Wv ranges
 5. Better examples(binaries) -> richard
