@@ -73,7 +73,7 @@ Questions :
 1. How should I pre-process the spectra ? What delta should I choose between the wv ? What parameters more generally ?
 2. Is the shape variability of the spectrum different depending on where you're looking in it ? Because then I would argue that when loading the spectra, we should choose a range of wavelengths where the radial velocities were computed and not just randomly 5600-5800A.
 
-24.10.2023 :
+## 24.10.2023 :
 
 To Do :
 
@@ -96,3 +96,35 @@ Plan on how to do it:
         3. Fold RVs accordingly.
         4. Get residuals by subtracting model again.
         5. Plot residuals.
+
+## 12.11.2023 :
+
+Done :
+
+1. Peak finding routine is better. Still need to find a way to remove the harmonics of the window harmonics and window harmonics of harmonics. But that's not a priority.
+
+Progress :
+
+1. Tellurics: impossible to install Telfit or Molecfit on this computer. Tried really hard but windows is not made for that. Even on the VM I have problems. What could be done is to use Windows Linux Subsystem but for that I need more space of my SSD and I absolutely don't have it...
+
+So the plan is the following : check manually for the moment the problematic zones and compare them to the ones where tellurics are less present or
+even absent.
+
+Problematic Absorption Zones:
+
+    1. Huggins band : 3100-3400
+
+    2. Chappuis band : 5000-7000 with peak at 6000
+
+    3. O2 B-band : 6800-7000
+
+    4. O2 A-band : 7600-7800
+
+    5. Big H20 : 7100-7300
+
+    6. Some Ozone in 4000-5000 range but minimal.
+
+Above that, it's a mess. Once I have Molecfit or Telfit working, I'll try to compute a periodogram in a problematic zone by correcting each spectra.
+
+2. Wv ranges : Computing errors as a function of range size but inside the 4000-5000 range.
+
