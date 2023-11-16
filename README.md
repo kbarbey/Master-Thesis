@@ -128,3 +128,10 @@ Above that, it's a mess. Once I have Molecfit or Telfit working, I'll try to com
 
 2. Wv ranges : Computing errors as a function of range size but inside the 4000-5000 range.
 
+To do:
+
+1. Error: fit gaussian to the peak and get the error from the fit. Check if not easier to just use the formula from vanderplas,2018 since we know that $\sigma\propto\frac{1}{T}$.
+
+2. Check all the other stars for telluric contamination and wavelength range.
+Maybe plot power of the shape peak as a function of range size but that does change actually.
+

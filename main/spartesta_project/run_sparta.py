@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import pickle
+import numpy as np
 from sparta.Auxil.PeriodicityDetector import PeriodicityDetector
 from sparta.UNICOR.Spectrum import Spectrum
 from sparta.UNICOR.Template import Template
@@ -9,23 +10,27 @@ from sparta.Observations import Observations
 
 # Specify the parent directory containing all the folders
 spectra_directory = "/home/astro/kbarbey/pdm/data/HERMES/SPECTRA/"
-rv_directory = "/home/astro/kbarbey/pdm/data/HERMES/RV_HERMES/"
+rv_directory = "/home/astro/kbarbey/pdm/data/HERMES/RV/"
 
 # List all subdirectories (folders) in the parent directory
 spectra_folders = sorted([os.path.join(spectra_directory,folder) for folder in os.listdir(spectra_directory) if os.path.isdir(os.path.join(spectra_directory, folder))])
 rv_folders = sorted([os.path.join(rv_directory,folder) for folder in os.listdir(rv_directory)])
-print(spectra_folders,rv_folders)
+#print(spectra_folders,rv_folders)
+
+list_wv =[[4450,4400,4350,4300,4250,4200,4150,4100,4050,4000],[4550,4600,4650,4700,4750,4800,4850,4900,4950,5000]] 
+
 # Loop over all subdirectories
-for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
+#for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
+for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
 
     # DATA PARAMETERS
 
     survey = "HERMES" # survey name
     sample_rate = 1 # sample rate of the data
-    min_wv = 4000 # minimum wavelength of the data
-    max_wv = 6000 # maximum wavelength of the data
-    spec_dir = spectra_folder #"/home/astro/kbarbey/pdm/S1D/BGCru" # directory of the spectra
-    rv_dir = rv_folder #"/home/astro/kbarbey/pdm/S1D/BGCru/RV/BG_Cru_coralie14.csv" # directory of the RVs
+    #min_wv = 4000 # minimum wavelength of the data
+    #max_wv = 6000 # maximum wavelength of the data
+    spec_dir = "/home/astro/kbarbey/pdm/data/HERMES/SPECTRA/RRLyr_Hermes_spectra"#spectra_folder  # directory of the spectra
+    rv_dir = "/home/astro/kbarbey/pdm/data/HERMES/RV/RRLyr_Hermes.csv" #rv_folder  # directory of the RVs
 
     # LOAD DATA
 
@@ -40,8 +45,8 @@ for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
     # PERIODOGRAM PARAMETERS
 
     baseline = int(obs_data.time_series.times[-1])
-    min_freq = 1/100 # Or maybe 1/2/baseline to be sure but let's test it that way.
-    max_freq = 1.5 # we don't expect more than one pulsation every two day so should be alright.
+    min_freq = 1/2/baseline # Or maybe 1/2/baseline to be sure but let's test it that way.
+    max_freq = 2 # depends on the star.
     freq_range = (min_freq, max_freq) # frequency range of the periodograms
     points_per_peak = 5
     periodogram_grid_resolution = points_per_peak*max_freq*baseline # frequency resolution of the periodograms
@@ -55,7 +60,12 @@ for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
     # Preprocess the spectra
 
     for i in obs_data.time_series.vals:
-        i = i.SpecPreProccess()
+        if abs(min_wv-max_wv) > 100:
+            i = i.InterpolateSpectrum()
+            i = i.FilterSpectrum(lowcut=3, highcut=0.15, order = 1)
+            i = i.ApplyCosineBell(alpha=0.3)
+        else:
+            i = i.InterpolateSpectrum()
 
     # Rearrange the RVs with the spectra
 
@@ -67,9 +77,9 @@ for rv_folder, spectra_folder in zip(rv_folders, spectra_folders):
     obs_data.initialize_periodicity_detector(freq_range=freq_range,
                                             periodogram_grid_resolution=periodogram_grid_resolution)
 
-    # obs_data.periodicity_detector.calc_GLS()
+    obs_data.periodicity_detector.calc_GLS()
 
-    # print("GLS done",flush=True)
+    print("GLS done",flush=True)
 
     # obs_data.periodicity_detector.calc_PDC(calc_biased_flag=False, calc_unbiased_flag=True)
 
