@@ -135,3 +135,7 @@ To do:
 2. Check all the other stars for telluric contamination and wavelength range.
 Maybe plot power of the shape peak as a function of range size but that does change actually.
 
+## Ideas:
+
+1. Could we use these type of periodograms on FWHM and BIS ? For example, if BIS is stellar activity then maybe compute semi-partial distance correlation of BIS and RVs. Should be the same as shape and shift but BIS instead of CCF of two spectra. Maybe it's equivalent.
+
