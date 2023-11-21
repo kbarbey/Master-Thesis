@@ -1,20 +1,20 @@
 import os
-import pandas as pd
-import pickle
-import numpy as np
+import csv
 from sparta.Auxil.PeriodicityDetector import PeriodicityDetector
 from sparta.UNICOR.Spectrum import Spectrum
 from sparta.UNICOR.Template import Template
 from sparta.Auxil.TimeSeries import TimeSeries
 from sparta.Observations import Observations
+import numpy as np
+import pandas as pd
 
 # Specify the parent directory containing all the folders
-spectra_directory = "/home/astro/kbarbey/pdm/data/HERMES/SPECTRA/"
-rv_directory = "/home/astro/kbarbey/pdm/data/HERMES/RV/"
+# spectra_directory = "/home/astro/kbarbey/pdm/data/HERMES/SPECTRA/"
+# rv_directory = "/home/astro/kbarbey/pdm/data/HERMES/RV/"
 
 # List all subdirectories (folders) in the parent directory
-spectra_folders = sorted([os.path.join(spectra_directory,folder) for folder in os.listdir(spectra_directory) if os.path.isdir(os.path.join(spectra_directory, folder))])
-rv_folders = sorted([os.path.join(rv_directory,folder) for folder in os.listdir(rv_directory)])
+# spectra_folders = sorted([os.path.join(spectra_directory,folder) for folder in os.listdir(spectra_directory) if os.path.isdir(os.path.join(spectra_directory, folder))])
+# rv_folders = sorted([os.path.join(rv_directory,folder) for folder in os.listdir(rv_directory)])
 #print(spectra_folders,rv_folders)
 
 list_wv =[[4450,4400,4350,4300,4250,4200,4150,4100,4050,4000],[4550,4600,4650,4700,4750,4800,4850,4900,4950,5000]] 
@@ -40,11 +40,14 @@ for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
     rv = df.rv.astype(float).values
     e_rv = df.rv_err.astype(float).values
     times = df.bjd.astype(float).values
-    times = times - int(min(times))
+    if survey == "CORALIE": 
+        ids = df.unique_id.astype(str).values
+    elif survey == "HERMES":
+        ids = df.unique_id.astype(int).values
 
     # PERIODOGRAM PARAMETERS
 
-    baseline = int(obs_data.time_series.times[-1])
+    baseline = int(abs(obs_data.time_series.times[-1]-obs_data.time_series.times[0]))
     min_freq = 1/2/baseline # Or maybe 1/2/baseline to be sure but let's test it that way.
     max_freq = 2 # depends on the star.
     freq_range = (min_freq, max_freq) # frequency range of the periodograms
@@ -60,7 +63,7 @@ for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
     # Preprocess the spectra
 
     for i in obs_data.time_series.vals:
-        if abs(min_wv-max_wv) > 100:
+        if abs(min_wv-max_wv) >= 100:
             i = i.InterpolateSpectrum()
             i = i.FilterSpectrum(lowcut=3, highcut=0.15, order = 1)
             i = i.ApplyCosineBell(alpha=0.3)
@@ -69,7 +72,7 @@ for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
 
     # Rearrange the RVs with the spectra
 
-    obs_data.rearrange_time_series(rv=rv, times=times)
+    obs_data.rearrange_time_series(rv=rv, times=times,ids=ids,unique_id = True)
 
     ## Compute periodograms
 
@@ -81,13 +84,13 @@ for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
 
     print("GLS done",flush=True)
 
-    # obs_data.periodicity_detector.calc_PDC(calc_biased_flag=False, calc_unbiased_flag=True)
+    obs_data.periodicity_detector.calc_PDC(calc_biased_flag=False, calc_unbiased_flag=True)
 
-    # print("PDC done",flush=True)
+    print("PDC done",flush=True)
 
-    # obs_data.periodicity_detector.calc_USURPER(calc_biased_flag=False, calc_unbiased_flag=True)
+    obs_data.periodicity_detector.calc_USURPER(calc_biased_flag=False, calc_unbiased_flag=True)
 
-    # print("USURPER done",flush=True)
+    print("USURPER done",flush=True)
 
     obs_data.periodicity_detector.calc_partial_periodogram(partial_type="shape")
 
@@ -99,8 +102,16 @@ for min_wv, max_wv in zip(list_wv[0],list_wv[1]):
 
     # Save the observations instance in a pickle file with the name of the spec_dir name in the results directory
 
-    file = open(os.path.join(results_dir, f"{spec_dir.rsplit('/',maxsplit=1)[-1]}_{str(min_wv)}_{str(max_wv)}.pkl"), 'wb')
-    pickle.dump(obs_data, file)
-    file.close()
+    with open(os.path.join(results_dir, f"{spec_dir.rsplit('/',maxsplit=1)[-1]}_{str(min_wv)}_{str(max_wv)}.csv"), 'w',newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        writer.writerow(["freq", "gls","usurper","pdc_unbiased","shape_periodogram", "shift_periodogram"])
+        for i in range(len(obs_data.periodicity_detector.results_frequency['GLS'])):
+            writer.writerow([obs_data.periodicity_detector.results_frequency['GLS'][i],
+                            obs_data.periodicity_detector.results_power['GLS'][i],
+                            obs_data.periodicity_detector.results_power['USURPER'][i],
+                            obs_data.periodicity_detector.results_power['PDC_unbiased'][i],
+                            obs_data.periodicity_detector.results_power['shape_periodogram'][i],
+                            obs_data.periodicity_detector.results_power['shift_periodogram'][i]]
+                            )
 
 print("Done")
