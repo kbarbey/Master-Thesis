@@ -124,7 +124,7 @@ Problematic Absorption Zones:
 
     6. Some Ozone in 4000-5000 range but minimal.
 
-Above that, it's a mess. Once I have Molecfit or Telfit working, I'll try to compute a periodogram in a problematic zone by correcting each spectra.
+Above that, it's a mess. Once I have Molecfit or Telfit working, I'll try to compute a periodogram in a problematic zone by correcting each spectra -> ok no that's clearly too computationnally expensive.
 
 2. Wv ranges : Computing errors as a function of range size but inside the 4000-5000 range.
 
