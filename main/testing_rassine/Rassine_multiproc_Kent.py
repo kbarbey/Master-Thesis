@@ -3,76 +3,61 @@
 
 '''Rudimentary script to multiprocess Rassine on a list of spectra
 
-Created on Thu Feb  7 16:34:29 2019
+Created on 16.12.2023
 Author: Kent Barbey'''
-
+import sys
+sys.path.append(r"C:\Users\kentb\Desktop\PDM\thesis\main\testing_rassine")
 import os
 import time
+import math
 import fileinput
 import shutil
 import subprocess
 import glob
 import multiprocessing as mp
+import Rassine
+from Rassine_config import config
 
-# =============================================================================
-#  ENTRIES
-# =============================================================================
 
-def create_copy(source_path, destination_path):
-    shutil.copyfile(source_path, destination_path)
-
-def modify_and_run(file_path,line_number,new_content):
-    # Read the content of the file
-    with fileinput.FileInput(file_path, inplace=True, backup=".bak") as file:
-        for i, line in enumerate(file, start=1):
-            # Modify the specified line
-            if i == line_number:
-                print(new_content)
-            else:
-                print(line, end="")
-
-    # Run Rassine
-    subprocess.run(["python", r"C:\Users\kentb\Desktop\PDM\thesis\main\testing_rassine\Rassine.py"],check=False)
-    print("Done")
-
-def run_loop(paths):
-    for file_path in paths:
-        file_path = file_path.replace("\\","/")
-        file_path = file_path.split("/")[-1]
-        file_path = '/'+file_path
-        print(file_path)
-        modify_and_run(r"C:\Users\kentb\Desktop\PDM\thesis\main\testing_rassine\Rassine_config.py", 28, 'spectrum_name = cwd+"/delCep_csv" + "%s"' % file_path)
+def run_loop(spectrum_names):
+    '''Runs Rassine on a list of spectra'''
+    config1 = config.copy()
+    for spectrum_name in spectrum_names:
+        config1['spectrum_name'] = spectrum_name
+        Rassine.rassine(config1)
+    print('Done')
 
 if __name__ == '__main__':
     # Get the list of spectra
     start_time = time.time()
     cwd = os.getcwd()
     spectrum_names = glob.glob(cwd + "/delCep_csv/*.csv")
-    #divide the list of spectra in 4
-    spectrum_names1 = spectrum_names[:int(len(spectrum_names)/4)]
-    spectrum_names2 = spectrum_names[int(len(spectrum_names)/4):int(len(spectrum_names)/2)]
-    spectrum_names3 = spectrum_names[int(len(spectrum_names)/2):int(3*len(spectrum_names)/4)]
-    spectrum_names4 = spectrum_names[int(3*len(spectrum_names)/4):]
-
-    # Save the config and the Rassine files
-    config_template_path = r"C:\Users\kentb\Desktop\PDM\thesis\main\testing_rassine\Rassine_config.py"
-    rassine_template_path = r"C:\Users\kentb\Desktop\PDM\thesis\main\testing_rassine\Rassine.py"
-
-    p1 = mp.Process(target=run_loop, args=(spectrum_names1,))
-    p2 = mp.Process(target=run_loop, args=(spectrum_names2,))
-    p3 = mp.Process(target=run_loop, args=(spectrum_names3,))
-    p4 = mp.Process(target=run_loop, args=(spectrum_names4,))
-
-    p1.start()
-    p2.start()
-    p3.start()
-    p4.start()
-
-    p1.join()
-    p2.join()
-    p3.join()
-    p4.join()
+    l = len(spectrum_names)
+    print("Number of spectra: " + str(len(spectrum_names)))
+    #number of cores
+    num_cores = mp.cpu_count()
+    spec_per_core = math.ceil(l/num_cores)
+    print("Number of cores: " + str(num_cores))
+    print("Number of spectra per core: " + str(spec_per_core))
+    #divide the list of spectra in num_cores parts
+    processes = []
+    divided_spectrum_names = []
+    for i in range(num_cores):
+        if i == num_cores-1:
+            specs = spectrum_names[spec_per_core*i:]
+        else:
+            specs = spectrum_names[spec_per_core*i:spec_per_core*(i+1)]
+        divided_spectrum_names.append(specs)
+    for idx, specs in enumerate(divided_spectrum_names):
+        print("Number of spectra in process " + str(idx+1) + ": " + str(len(specs)))
+        p = mp.Process(target=run_loop, args=(specs,))
+        processes.append(p)
+    for p in processes:
+        p.start()
+    for p in processes:
+        p.join()
 
     end_time = time.time()
     print("Total time: " + str(end_time - start_time))
+
     

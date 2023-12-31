@@ -25,7 +25,7 @@ cwd = os.getcwd()
 #  ENTRIES
 # =============================================================================
 
-spectrum_name = cwd+"/delCep_csv" + "/491793.csv"
+spectrum_name = cwd+"/delCep_csv" + "/864739.csv"
 output_dir  = cwd+'/delCep_output'                             # directory where output files are written
 
 synthetic_spectrum = False   # True if working with a noisy-free synthetic spectra 

@@ -71,7 +71,7 @@ interpolation = 'cubic' # define the interpolation for the continuum displayed i
                         # note that at the end a cubic and linear interpolation are saved in 'output' regardless this value
 
 feedback = False       # run the code without graphical feedback and interactions with the sphinx (only wishable if lot of spectra)     
-only_print_end = False  # only print in the console the confirmation of RASSINE ending
+only_print_end = True  # only print in the console the confirmation of RASSINE ending
 plot_end = False        # display the final product in the graphic
 save_last_plot = False  # save the last graphical output (final output)
 
