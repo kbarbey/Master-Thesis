@@ -25,8 +25,8 @@ cwd = os.getcwd()
 #  ENTRIES
 # =============================================================================
 
-spectrum_name = cwd+"/delCep_csv" + "/864917.csv"
-output_dir  = cwd+'/delCep_output'                             # directory where output files are written
+spectrum_name = cwd+"/barnard_missing" + "/2012-06-02T06-00-58.498.csv"
+output_dir  = cwd+'/barnard_output'                             # directory where output files are written
 
 synthetic_spectrum = False   # True if working with a noisy-free synthetic spectra 
 anchor_file = ''             # Put a RASSINE output file that will fix the value of the 7 parameters to the same value than in the anchor file
@@ -70,7 +70,7 @@ count_out_lim = 1       # number of outliers clipping in automatic mode (put at 
 interpolation = 'cubic' # define the interpolation for the continuum displayed in the subproducts            
                         # note that at the end a cubic and linear interpolation are saved in 'output' regardless this value
 
-feedback = False       # run the code without graphical feedback and interactions with the sphinx (only wishable if lot of spectra)     
+feedback = True       # run the code without graphical feedback and interactions with the sphinx (only wishable if lot of spectra)     
 only_print_end = True  # only print in the console the confirmation of RASSINE ending
 plot_end = False        # display the final product in the graphic
 save_last_plot = False  # save the last graphical output (final output)
